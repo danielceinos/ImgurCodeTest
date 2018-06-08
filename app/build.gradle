@@ -92,3 +92,7 @@ dependencies {
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 }
 apply plugin: 'kotlin-android-extensions'
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:+'
+}

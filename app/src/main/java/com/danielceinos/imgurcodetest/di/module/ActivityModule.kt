@@ -1,5 +1,6 @@
 package com.danielceinos.imgurcodetest.di.module
 
+import com.danielceinos.imgurcodetest.presentation.gallery.GalleryActivity
 import com.danielceinos.imgurcodetest.presentation.login.LoginActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -12,4 +13,7 @@ abstract class ActivityModule {
 
   @ContributesAndroidInjector
   abstract fun contributeLoginActivity(): LoginActivity
+
+  @ContributesAndroidInjector
+  abstract fun contributeGalleryActivity(): GalleryActivity
 }
