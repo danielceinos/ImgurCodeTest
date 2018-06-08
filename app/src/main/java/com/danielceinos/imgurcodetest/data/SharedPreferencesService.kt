@@ -14,4 +14,7 @@ class SharedPreferencesService @Inject constructor(private val sharedPreferences
       apply()
     }
   }
+
+  fun getPref(key: String) = sharedPreferences.getString(key, null)
+
 }

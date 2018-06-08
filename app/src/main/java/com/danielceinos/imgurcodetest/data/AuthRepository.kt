@@ -8,9 +8,10 @@ import javax.inject.Inject
  */
 class AuthRepository @Inject constructor(private val imgurService: ImgurService, private val sharedPreferencesService: SharedPreferencesService) {
 
-  fun getToken(tokenRequest: TokenRequest) = imgurService.getToken(tokenRequest)
+  fun doAuth(tokenRequest: TokenRequest) = imgurService.getToken(tokenRequest)
       .doOnSuccess {
         it?.body()?.getAccessToken()?.let { sharedPreferencesService.savePref("token", it) }
       }
 
+  fun getToken() = sharedPreferencesService.getPref("token")
 }
