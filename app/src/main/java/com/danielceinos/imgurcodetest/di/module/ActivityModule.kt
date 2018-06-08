@@ -1,6 +1,6 @@
 package com.danielceinos.imgurcodetest.di.module
 
-import com.danielceinos.imgurcodetest.LoginActivity
+import com.danielceinos.imgurcodetest.presentation.login.LoginActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

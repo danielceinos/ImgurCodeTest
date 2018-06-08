@@ -1,8 +1,8 @@
-package com.danielceinos.imgurcodetest
+package com.danielceinos.imgurcodetest.presentation.login
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import com.danielceinos.imgurcodetest.R
 
 class LoginActivity : AppCompatActivity() {
 
