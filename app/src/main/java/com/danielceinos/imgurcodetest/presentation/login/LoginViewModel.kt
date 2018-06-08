@@ -16,22 +16,22 @@ class LoginViewModel @Inject constructor(private val imgurService: ImgurService)
 
   var mLoginViewState: MutableLiveData<LoginViewState> = MutableLiveData()
 
-  fun login(username: String, password: String) {
-    imgurService.getToken(TokenRequest(username,
-        "05608981340475504adf51b8c37b8b2c18e025c2",
+  fun login(password: String) {
+    imgurService.getToken(TokenRequest("d94ee637597774f",
+        "b4b4ab0dd8f3aadb7275376e929559338618b3f8",
         "authorization_code",
         password))
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe({ response ->
           Log.d("LoginViewModel", "${response.isSuccessful}")
-          if(response.isSuccessful) {
-            if( response.code() == 200) {
+          if (response.isSuccessful) {
+            if (response.code() == 200) {
               mLoginViewState.postValue(LoginViewState(true, "EXITO!! :)"))
-            }else {
+            } else {
               mLoginViewState.postValue(LoginViewState(false, response.message()))
             }
-          }else {
+          } else {
             mLoginViewState.postValue(LoginViewState(false, response.message()))
           }
         }, { error ->
@@ -39,6 +39,6 @@ class LoginViewModel @Inject constructor(private val imgurService: ImgurService)
         })
   }
 
-  data class LoginViewState(val success: Boolean , val msg: String)
+  data class LoginViewState(val success: Boolean, val msg: String)
 
 }
