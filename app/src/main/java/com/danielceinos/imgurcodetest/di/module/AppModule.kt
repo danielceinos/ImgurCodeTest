@@ -1,6 +1,9 @@
 package com.danielceinos.imgurcodetest.di.module
 
+import android.content.Context
+import com.danielceinos.imgurcodetest.App
 import com.danielceinos.imgurcodetest.data.ImgurService
+import com.danielceinos.imgurcodetest.data.SharedPreferencesService
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -48,5 +51,13 @@ class AppModule {
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build()
         .create(ImgurService::class.java)
+  }
+
+  @Provides
+  @Singleton
+  internal fun provideSharedPrefencesService(app: App): SharedPreferencesService {
+    return SharedPreferencesService(app.getSharedPreferences("prefs",
+        Context.MODE_PRIVATE)
+    )
   }
 }

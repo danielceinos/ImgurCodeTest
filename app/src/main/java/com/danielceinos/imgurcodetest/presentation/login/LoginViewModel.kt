@@ -3,7 +3,7 @@ package com.danielceinos.imgurcodetest.presentation.login
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
-import com.danielceinos.imgurcodetest.data.ImgurService
+import com.danielceinos.imgurcodetest.data.AuthRepository
 import com.danielceinos.imgurcodetest.data.request.TokenRequest
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -12,12 +12,12 @@ import javax.inject.Inject
 /**
  * Created by Daniel S on 08/06/2018.
  */
-class LoginViewModel @Inject constructor(private val imgurService: ImgurService) : ViewModel() {
+class LoginViewModel @Inject constructor(private val authRepository: AuthRepository) : ViewModel() {
 
   var mLoginViewState: MutableLiveData<LoginViewState> = MutableLiveData()
 
   fun login(password: String) {
-    imgurService.getToken(TokenRequest("d94ee637597774f",
+    authRepository.getToken(TokenRequest("d94ee637597774f",
         "b4b4ab0dd8f3aadb7275376e929559338618b3f8",
         "authorization_code",
         password))
