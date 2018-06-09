@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.danielceinos.imgurcodetest">
 
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.INTERNET" />
+  <uses-feature android:name="android.hardware.camera" android:required="true" />
 
   <application
       android:name=".App"
@@ -27,7 +29,17 @@
     <activity
         android:name=".presentation.gallery.GalleryActivity"
         android:label="@string/title_activity_gallery"
-        android:theme="@style/AppTheme.NoActionBar"></activity>
+        android:theme="@style/AppTheme.NoActionBar"/>
+
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="com.danielceinos.imgurcodetest.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+      <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/file_paths"></meta-data>
+    </provider>
   </application>
 
 </manifest>
