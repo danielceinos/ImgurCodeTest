@@ -12,9 +12,9 @@
 
     <ImageView
         android:id="@+id/iv_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="centerCrop"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:scaleType="fitCenter"
         app:imageUrl="@{image_url}"
         />
 

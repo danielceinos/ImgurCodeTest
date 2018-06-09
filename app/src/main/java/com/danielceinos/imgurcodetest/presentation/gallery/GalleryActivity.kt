@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import com.danielceinos.imgurcodetest.R
 import com.danielceinos.imgurcodetest.databinding.ActivityGalleryBinding
 import com.danielceinos.imgurcodetest.di.ViewModelFactory
@@ -30,12 +30,11 @@ class GalleryActivity : AppCompatActivity() {
 
     mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(GalleryViewModel::class.java)
 
-    val layoutManager = LinearLayoutManager(this)
+    val layoutManager = GridLayoutManager(this, 3)
     mGalleryListAdapter = GalleryListAdapter()
 
     rv_gallery.adapter = mGalleryListAdapter
     rv_gallery.layoutManager = layoutManager
-
 
     mViewModel.mGalleryViewState.observe(this, Observer {
       mGalleryListAdapter.submitList(it?.images)
