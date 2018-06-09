@@ -43,7 +43,7 @@ class AppModule {
 
   @Provides
   @Singleton
-  internal fun provideLocationService(okHttpClient: OkHttpClient, gson: Gson): ImgurService {
+  internal fun provideImgurService(okHttpClient: OkHttpClient, gson: Gson): ImgurService {
     return Retrofit.Builder()
         .baseUrl("https://api.imgur.com/") //TODO gradle
         .client(okHttpClient)

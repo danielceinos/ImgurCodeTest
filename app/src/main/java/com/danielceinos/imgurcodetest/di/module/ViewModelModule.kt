@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import com.danielceinos.imgurcodetest.di.ViewModelFactory
 import com.danielceinos.imgurcodetest.di.ViewModelKey
+import com.danielceinos.imgurcodetest.presentation.gallery.GalleryViewModel
 import com.danielceinos.imgurcodetest.presentation.login.LoginViewModel
 import dagger.Binds
 import dagger.Module
@@ -18,7 +19,12 @@ abstract class ViewModelModule {
   @Binds
   @IntoMap
   @ViewModelKey(LoginViewModel::class)
-  abstract fun bindLoginViewModel(locationViewModel: LoginViewModel): ViewModel
+  abstract fun bindLoginViewModel(loginViewModel: LoginViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelKey(GalleryViewModel::class)
+  abstract fun bindGalleryViewModel(galleryViewModel: GalleryViewModel): ViewModel
 
   @Binds
   abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
