@@ -17,6 +17,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
   var mLoginViewState: MutableLiveData<LoginViewState> = MutableLiveData()
 
   fun login(password: String) {
+    //TODO extract ids and secret
     authRepository.doAuth(TokenRequest("d94ee637597774f",
         "b4b4ab0dd8f3aadb7275376e929559338618b3f8",
         "authorization_code",

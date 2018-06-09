@@ -29,25 +29,31 @@ class LoginActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     mBinding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
+    //TODO check if exist valid token
     mViewModel = ViewModelProviders.of(this, mViewModelFactory)[LoginViewModel::class.java]
     mViewModel.mLoginViewState.observe(this, Observer { renderViewState(it) })
 
     mBinding.bLogin.setOnClickListener {
-      val authorizeUrl = HttpUrl.parse("https://api.imgur.com/oauth2/authorize")
-          ?.newBuilder()
-          ?.addQueryParameter("client_id", "d94ee637597774f")
-          ?.addQueryParameter("response_type", "code")
-          ?.addQueryParameter("state", "APPLICATION_STATE")
-          ?.build()
-
-      val i = Intent(Intent.ACTION_VIEW)
-      i.data = Uri.parse(authorizeUrl?.url().toString())
-      startActivity(i)
+      launchOauthIntent()
     }
+
     if (intent != null && intent.data != null) {
       intent.data.getQueryParameter("code")?.let { mViewModel.login(it)}
       intent.data.getQueryParameter("error")?.let { Snackbar.make(mBinding.root, it, Snackbar.LENGTH_LONG).show() }
     }
+  }
+
+  private fun launchOauthIntent() {
+    val authorizeUrl = HttpUrl.parse("https://api.imgur.com/oauth2/authorize")
+        ?.newBuilder()
+        ?.addQueryParameter("client_id", "d94ee637597774f")
+        ?.addQueryParameter("response_type", "code")
+        ?.addQueryParameter("state", "APPLICATION_STATE")
+        ?.build()
+
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = Uri.parse(authorizeUrl?.url().toString())
+    startActivity(intent)
   }
 
   private fun renderViewState(loginViewState: LoginViewState?) {
