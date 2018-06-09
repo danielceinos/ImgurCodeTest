@@ -45,7 +45,8 @@ class LoginActivity : AppCompatActivity() {
       startActivity(i)
     }
     if (intent != null && intent.data != null) {
-      mViewModel.login(intent.data.getQueryParameter("code"))
+      intent.data.getQueryParameter("code")?.let { mViewModel.login(it)}
+      intent.data.getQueryParameter("error")?.let { Snackbar.make(mBinding.root, it, Snackbar.LENGTH_LONG).show() }
     }
   }
 
