@@ -2,6 +2,7 @@ package com.danielceinos.imgurcodetest.data
 
 import com.danielceinos.imgurcodetest.data.request.ImageUploadRequest
 import com.danielceinos.imgurcodetest.data.request.TokenRequest
+import com.danielceinos.imgurcodetest.data.response.ImageDeleteResponse
 import com.danielceinos.imgurcodetest.data.response.ImageResponse
 import com.danielceinos.imgurcodetest.data.response.ImagesResponse
 import com.danielceinos.imgurcodetest.data.response.OauthToken
@@ -26,4 +27,7 @@ interface ImgurService {
   fun uploadImage(@Header("Authorization") token: String,
                   @Body imageUploadRequest: ImageUploadRequest): Single<Response<ImageResponse>>
 
+  @DELETE("3/image/{imageHash}")
+  fun deleteImage(@Header("Authorization") token: String,
+                  @Path(value = "imageHash") imageHash: String): Single<Response<ImageDeleteResponse>>
 }

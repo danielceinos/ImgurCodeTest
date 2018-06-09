@@ -10,11 +10,13 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import com.danielceinos.imgurcodetest.R
 import com.danielceinos.imgurcodetest.common.scale
+import com.danielceinos.imgurcodetest.data.response.ImgurImage
 import com.danielceinos.imgurcodetest.databinding.ActivityGalleryBinding
 import com.danielceinos.imgurcodetest.di.ViewModelFactory
 import com.danielceinos.imgurcodetest.presentation.gallery.GalleryViewModel.GalleryViewState
@@ -27,7 +29,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListener {
+class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListener, GalleryListAdapter.OnImageLongClickListener {
 
   @Inject
   lateinit var mViewModelFactory: ViewModelFactory
@@ -49,7 +51,7 @@ class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListen
       launchCamera()
     }
     val layoutManager = GridLayoutManager(this, 3)
-    mGalleryListAdapter = GalleryListAdapter()
+    mGalleryListAdapter = GalleryListAdapter(this)
 
     rv_gallery.adapter = mGalleryListAdapter
     rv_gallery.layoutManager = layoutManager
@@ -73,7 +75,7 @@ class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListen
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-      showConfirmationDialog()
+      showUploadConfirmationDialog()
     }
   }
 
@@ -81,6 +83,10 @@ class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListen
     if (upload) {
       mCurrentPhotoPath?.let { mViewModel.uploadImage(it, "", "", "") }
     }
+  }
+
+  override fun onLongClick(imgurImage: ImgurImage) {
+    showDeleteConfirmationDialog(imgurImage)
   }
 
   private fun launchCamera() {
@@ -112,9 +118,25 @@ class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListen
     return image
   }
 
-  private fun showConfirmationDialog() {
+  private fun showUploadConfirmationDialog() {
     var bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
     bitmap = bitmap.scale((1 * Math.pow(10.0, 6.0)).toFloat())
     ImageUploadDialog(this, this, bitmap).show()
+  }
+
+  private fun showDeleteConfirmationDialog(imgurImage: ImgurImage) {
+    val alertDialog = AlertDialog.Builder(this).create()
+    alertDialog.setTitle("Borar imagen")
+    alertDialog.setMessage("¿Estás seguro que quieres borrar esta imagen?")
+    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Si",
+        { dialog, _ ->
+          run {
+            mViewModel.deleteImage(imgurImage)
+            dialog.dismiss()
+          }
+        })
+    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+        { dialog, _ -> dialog.dismiss() })
+    alertDialog.show()
   }
 }

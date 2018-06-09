@@ -12,22 +12,32 @@ import com.danielceinos.imgurcodetest.databinding.ItemGalleryBinding
 /**
  * Created by Daniel S on 09/06/2018.
  */
-class GalleryListAdapter : ListAdapter<ImgurImage, GalleryListAdapter.ItemViewHolder>(ListImageDiffCallback()) {
+class GalleryListAdapter(val onImageLongClickListener: OnImageLongClickListener) : ListAdapter<ImgurImage, GalleryListAdapter.ItemViewHolder>(ListImageDiffCallback()) {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
     val inflater = LayoutInflater.from(parent.context)
     val binding = DataBindingUtil.inflate<ItemGalleryBinding>(inflater, R.layout.item_gallery, parent, false)
-    return ItemViewHolder(binding)
+    return ItemViewHolder(binding, onImageLongClickListener)
   }
 
   override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
     holder.bind(getItem(position))
   }
 
-  class ItemViewHolder(private val itemGalleryBinding: ItemGalleryBinding) : RecyclerView.ViewHolder(itemGalleryBinding.root) {
+  class ItemViewHolder(private val itemGalleryBinding: ItemGalleryBinding,
+                       private val onImageLongClickListener: OnImageLongClickListener
+  ) : RecyclerView.ViewHolder(itemGalleryBinding.root) {
 
     fun bind(item: ImgurImage) {
       itemGalleryBinding.imageUrl = item.link
+      itemGalleryBinding.root.setOnLongClickListener {
+        onImageLongClickListener.onLongClick(item)
+        true
+      }
     }
+  }
+
+  interface OnImageLongClickListener {
+    fun onLongClick(imgurImage: ImgurImage)
   }
 }

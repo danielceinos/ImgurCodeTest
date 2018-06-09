@@ -1,6 +1,7 @@
 package com.danielceinos.imgurcodetest.data
 
 import com.danielceinos.imgurcodetest.data.request.ImageUploadRequest
+import com.danielceinos.imgurcodetest.data.response.ImgurImage
 import javax.inject.Inject
 
 /**
@@ -19,4 +20,9 @@ class ImageRepository @Inject constructor(private val imgurService: ImgurService
       imgurService.uploadImage(
           "Bearer ${sharedPreferencesService.getPref("token")}",
           imageUploadRequest)
+
+  fun deleteImage(image: ImgurImage) =
+      imgurService.deleteImage(
+          "Bearer ${sharedPreferencesService.getPref("token")}",
+          image.deletehash ?: "")
 }

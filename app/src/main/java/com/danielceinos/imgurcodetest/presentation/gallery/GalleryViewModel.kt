@@ -39,7 +39,6 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
   }
 
   fun uploadImage(imagePath: String, name: String, title: String, description: String) {
-
     mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, null))
     doAsync {
       var bitmap = BitmapFactory.decodeFile(imagePath)
@@ -61,6 +60,20 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
             Log.e("Tag", error.localizedMessage)
           })
     }
+  }
+
+  fun deleteImage(imgurImage: ImgurImage) {
+    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, null))
+    imageRepository.deleteImage(imgurImage)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(Schedulers.io())
+        .subscribe({ response ->
+          loadImages()
+          Log.i("Tag", "Image deleted success")
+          //TODO handle response error code
+        }, { error ->
+          Log.e("Tag", error.localizedMessage)
+        })
   }
 
   data class GalleryViewState(val loading: Boolean,
