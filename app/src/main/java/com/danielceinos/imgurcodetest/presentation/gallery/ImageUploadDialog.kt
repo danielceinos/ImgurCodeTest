@@ -21,8 +21,14 @@ class ImageUploadDialog(context: Context?,
     requestWindowFeature(Window.FEATURE_NO_TITLE)
     setContentView(R.layout.dialog_upload)
     iv_image.setImageBitmap(bitmap)
-    b_cancel.setOnClickListener { dialogClickListener.onClick(false) }
-    b_upload.setOnClickListener { dialogClickListener.onClick(true) }
+    b_cancel.setOnClickListener {
+      dialogClickListener.onClick(false)
+      dismiss()
+    }
+    b_upload.setOnClickListener {
+      dialogClickListener.onClick(true)
+      dismiss()
+    }
   }
 
   interface DialogClickListener {

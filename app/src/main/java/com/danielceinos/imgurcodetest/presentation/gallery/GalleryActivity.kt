@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
@@ -13,15 +12,14 @@ import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.util.Log
+import android.view.View
 import com.danielceinos.imgurcodetest.R
 import com.danielceinos.imgurcodetest.common.scale
 import com.danielceinos.imgurcodetest.databinding.ActivityGalleryBinding
 import com.danielceinos.imgurcodetest.di.ViewModelFactory
+import com.danielceinos.imgurcodetest.presentation.gallery.GalleryViewModel.GalleryViewState
 import kotlinx.android.synthetic.main.activity_gallery.*
 import kotlinx.android.synthetic.main.content_gallery.*
-import org.jetbrains.anko.doAsync
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -57,10 +55,20 @@ class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListen
     rv_gallery.layoutManager = layoutManager
 
     mViewModel.mGalleryViewState.observe(this, Observer {
-      mGalleryListAdapter.submitList(it?.images)
+      if (it != null)
+        renderViewState(it)
     })
 
     mViewModel.loadImages()
+  }
+
+  private fun renderViewState(galleryViewState: GalleryViewState) {
+    galleryViewState.images?.let { mGalleryListAdapter.submitList(it) }
+    if (galleryViewState.loading) {
+      loading_progress_bar?.visibility = View.VISIBLE
+    } else {
+      loading_progress_bar?.visibility = View.GONE
+    }
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -71,16 +79,7 @@ class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListen
 
   override fun onClick(upload: Boolean) {
     if (upload) {
-      doAsync {
-        var bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
-        bitmap = bitmap.scale((1 * Math.pow(10.0, 6.0)).toFloat())
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        val encoded = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
-        Log.i("GalleryActivity", encoded)
-        mViewModel.uploadImage(encoded, "", "", "")
-      }
+      mCurrentPhotoPath?.let { mViewModel.uploadImage(it, "", "", "") }
     }
   }
 
