@@ -2,17 +2,15 @@ package com.danielceinos.imgurcodetest.presentation.gallery
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
-import com.danielceinos.imgurcodetest.common.scale
+import com.danielceinos.imgurcodetest.common.ImageUtils
+import com.danielceinos.imgurcodetest.common.ImageUtils.ImageUtils.scaleImageToBase64
 import com.danielceinos.imgurcodetest.data.ImageRepository
 import com.danielceinos.imgurcodetest.data.request.ImageUploadRequest
 import com.danielceinos.imgurcodetest.data.response.ImgurImage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 /**
@@ -41,14 +39,8 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
   fun uploadImage(imagePath: String, name: String, title: String, description: String) {
     mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, null))
     doAsync {
-      var bitmap = BitmapFactory.decodeFile(imagePath)
-      bitmap = bitmap.scale((1 * Math.pow(10.0, 6.0)).toFloat())
-      val byteArrayOutputStream = ByteArrayOutputStream()
-      bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-      val byteArray = byteArrayOutputStream.toByteArray()
-      val encoded = android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
-
-      imageRepository.uploadImage(ImageUploadRequest(encoded, name, title, description))
+      imageRepository.uploadImage(
+          ImageUploadRequest(scaleImageToBase64(imagePath), name, title, description))
           .observeOn(AndroidSchedulers.mainThread())
           .subscribeOn(Schedulers.io())
           .subscribe({ response ->
