@@ -1,5 +1,6 @@
 package com.danielceinos.imgurcodetest.data
 
+import com.danielceinos.imgurcodetest.data.request.ImageUploadRequest
 import javax.inject.Inject
 
 /**
@@ -13,4 +14,9 @@ class ImageRepository @Inject constructor(private val imgurService: ImgurService
           "Bearer ${sharedPreferencesService.getPref("token")}",
           sharedPreferencesService.getPref("account_username"),
           page)
+
+  fun uploadImage(imageUploadRequest: ImageUploadRequest) =
+      imgurService.uploadImage(
+          "Bearer ${sharedPreferencesService.getPref("token")}",
+          imageUploadRequest)
 }
