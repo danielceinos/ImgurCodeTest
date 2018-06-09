@@ -2,7 +2,6 @@ package com.danielceinos.imgurcodetest.data
 
 import com.danielceinos.imgurcodetest.data.request.TokenRequest
 import com.danielceinos.imgurcodetest.data.response.ImagesResponse
-import com.danielceinos.imgurcodetest.data.response.ImgurImage
 import com.danielceinos.imgurcodetest.data.response.OauthToken
 import io.reactivex.Single
 import retrofit2.Response

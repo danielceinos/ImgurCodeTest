@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     if (intent != null && intent.data != null) {
-      intent.data.getQueryParameter("code")?.let { mViewModel.login(it)}
+      intent.data.getQueryParameter("code")?.let { mViewModel.login(it) }
       intent.data.getQueryParameter("error")?.let { Snackbar.make(mBinding.root, it, Snackbar.LENGTH_LONG).show() }
     }
   }
