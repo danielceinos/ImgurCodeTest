@@ -1,6 +1,9 @@
 package com.danielceinos.imgurcodetest.data
 
+import com.danielceinos.imgurcodetest.data.request.RefreshTokenRequest
 import com.danielceinos.imgurcodetest.data.request.TokenRequest
+import com.danielceinos.imgurcodetest.data.response.OauthToken
+import retrofit2.Response
 import javax.inject.Inject
 
 /**
@@ -10,11 +13,21 @@ class AuthRepository @Inject constructor(private val imgurService: ImgurService,
 
   fun doAuth(tokenRequest: TokenRequest) = imgurService.getToken(tokenRequest)
       .doOnSuccess {
-        it?.body()?.getAccessToken()?.let { sharedPreferencesService.savePref("token", it) }
-        it?.body()?.getAccountUsername()?.let { sharedPreferencesService.savePref("account_username", it) }
+        saveOauthToken(it)
       }
 
-  fun getToken() = sharedPreferencesService.getPref("token")
+  fun doRefreshToken(refreshTokenRequest: RefreshTokenRequest) = imgurService.refreshToken(refreshTokenRequest)
+      .doOnSuccess {
+        saveOauthToken(it)
+      }
+
+  fun getRefreshToken() = sharedPreferencesService.getPref("refresh_token")
 
   fun getAccountUsername() = sharedPreferencesService.getPref("account_username")
+
+  private fun saveOauthToken(it: Response<OauthToken>?) {
+    it?.body()?.getAccessToken()?.let { sharedPreferencesService.savePref("token", it) }
+    it?.body()?.getAccountUsername()?.let { sharedPreferencesService.savePref("account_username", it) }
+    it?.body()?.getRefreshToken()?.let { sharedPreferencesService.savePref("refresh_token", it) }
+  }
 }

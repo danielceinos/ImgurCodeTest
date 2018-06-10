@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.danielceinos.imgurcodetest.data.AuthRepository
+import com.danielceinos.imgurcodetest.data.request.RefreshTokenRequest
 import com.danielceinos.imgurcodetest.data.request.TokenRequest
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -16,22 +17,30 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
 
   var mLoginViewState: MutableLiveData<LoginViewState> = MutableLiveData()
 
-  fun login(password: String) {
-    //TODO extract ids and secret
-    authRepository.doAuth(TokenRequest("d94ee637597774f",
-        "b4b4ab0dd8f3aadb7275376e929559338618b3f8",
-        "authorization_code",
-        password))
+  init {
+    authRepository.getRefreshToken()?.let {
+      authRepository.doRefreshToken(RefreshTokenRequest(it))
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribeOn(Schedulers.io())
+          .subscribe({ response ->
+            Log.d("LoginViewModel", "${response.isSuccessful}")
+            if (response.isSuccessful) {
+              mLoginViewState.postValue(LoginViewState(true, "EXITO!! :)"))
+            }
+          }, { error ->
+            Log.e("Tag", error.localizedMessage)
+          })
+    }
+  }
+
+  fun login(code: String) {
+    authRepository.doAuth(TokenRequest(code))
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe({ response ->
           Log.d("LoginViewModel", "${response.isSuccessful}")
           if (response.isSuccessful) {
-            if (response.code() == 200) {
-              mLoginViewState.postValue(LoginViewState(true, "EXITO!! :)"))
-            } else {
-              mLoginViewState.postValue(LoginViewState(false, response.message()))
-            }
+            mLoginViewState.postValue(LoginViewState(true, "EXITO!! :)"))
           } else {
             mLoginViewState.postValue(LoginViewState(false, response.message()))
           }

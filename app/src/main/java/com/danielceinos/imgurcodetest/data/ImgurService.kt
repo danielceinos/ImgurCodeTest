@@ -1,6 +1,7 @@
 package com.danielceinos.imgurcodetest.data
 
 import com.danielceinos.imgurcodetest.data.request.ImageUploadRequest
+import com.danielceinos.imgurcodetest.data.request.RefreshTokenRequest
 import com.danielceinos.imgurcodetest.data.request.TokenRequest
 import com.danielceinos.imgurcodetest.data.response.ImageDeleteResponse
 import com.danielceinos.imgurcodetest.data.response.ImageResponse
@@ -17,6 +18,9 @@ interface ImgurService {
 
   @POST("oauth2/token")
   fun getToken(@Body tokenRequest: TokenRequest): Single<Response<OauthToken>>
+
+  @POST("oauth2/token")
+  fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Single<Response<OauthToken>>
 
   @GET("3/account/{username}/images/{page}")
   fun getImages(@Header("Authorization") token: String,

@@ -60,7 +60,9 @@ class LoginActivity : AppCompatActivity() {
     loginViewState?.let {
       if (it.success) {
         val intent = Intent(this, GalleryActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+
       }
       Snackbar.make(mBinding.root, it.msg, Snackbar.LENGTH_LONG).show()
     }
