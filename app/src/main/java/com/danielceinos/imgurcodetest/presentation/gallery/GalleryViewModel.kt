@@ -20,7 +20,7 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
   val mGalleryViewState: MutableLiveData<GalleryViewState> = MutableLiveData()
 
   fun loadImages() {
-    mGalleryViewState.postValue(GalleryViewState(true, true, mGalleryViewState.value?.images, null))
+    mGalleryViewState.postValue(mGalleryViewState.value?.copy(loading = true))
     imageRepository.getImagesForCurrentUser(0)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
@@ -28,7 +28,7 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
           if (response.isSuccessful) {
             mGalleryViewState.postValue(GalleryViewState(false, true, response.body()?.data, null))
           } else {
-            mGalleryViewState.postValue(GalleryViewState(false, false, null, "Error al cargar las imagenes"))
+            mGalleryViewState.postValue(mGalleryViewState.value?.copy(loading = false, success = false, msg = "Error al obtener las imagenes"))
           }
         }, { error ->
           Log.e("GalleryViewModel", error.localizedMessage)
@@ -36,19 +36,22 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
   }
 
   fun uploadImage(imagePath: String, name: String, title: String, description: String) {
-    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, "Subiendo ... "))
+    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, "Subiendo imagen... "))
     doAsync {
       imageRepository.uploadImage(
           ImageUploadRequest(scaleImageToBase64(imagePath), name, title, description))
           .observeOn(AndroidSchedulers.mainThread())
           .subscribeOn(Schedulers.io())
           .subscribe({ response ->
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
               Log.i("GalleryViewModel", "Image upload success")
-              loadImages()
-            }else{
+              val images = mutableListOf<ImgurImage>()
+              response.body()?.data?.let { images.add(it) }
+              mGalleryViewState.value?.images?.let { images.addAll(it) }
+              mGalleryViewState.postValue(GalleryViewState(false, true, images, null))
+            } else {
               Log.e("GalleryViewModel", "Image upload error: ${response.message()}")
-              mGalleryViewState.postValue(GalleryViewState(false, false, mGalleryViewState.value?.images, "Error al subir la imagen"))
+              mGalleryViewState.postValue(mGalleryViewState.value?.copy(loading = false, success = false, msg = "Error al subir la imagen"))
             }
           }, { error ->
             Log.e("GalleryViewModel", error.localizedMessage)
@@ -57,17 +60,19 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
   }
 
   fun deleteImage(imgurImage: ImgurImage) {
-    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, "Borrando imagen ..."))
+    mGalleryViewState.postValue(mGalleryViewState.value?.copy(loading = true, success = false, msg = "Borrando imagen..."))
     imageRepository.deleteImage(imgurImage)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe({ response ->
-          if(response.isSuccessful){
+          if (response.isSuccessful) {
             Log.i("GalleryViewModel", "Image deleted success")
-            loadImages()
-          }else{
+            val images =  mGalleryViewState.value?.images?.toMutableList()
+            images?.remove(imgurImage)
+            mGalleryViewState.postValue(GalleryViewState(false, true, images, null))
+          } else {
             Log.e("GalleryViewModel", "Image deleted error: ${response.message()}")
-            mGalleryViewState.postValue(GalleryViewState(false, false, mGalleryViewState.value?.images, "Error al borrar la imagen"))
+            mGalleryViewState.postValue(mGalleryViewState.value?.copy(loading = false, success = false, msg = "Error al borrar la imagen"))
           }
         }, { error ->
           Log.e("GalleryViewModel", error.localizedMessage)

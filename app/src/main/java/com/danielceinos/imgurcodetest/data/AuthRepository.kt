@@ -24,8 +24,8 @@ class AuthRepository @Inject constructor(private val imgurService: ImgurService,
   fun getRefreshToken() = sharedPreferencesService.getRefreshToken()
 
   private fun saveOauthToken(it: Response<OauthToken>?) {
-    it?.body()?.getAccessToken()?.let { sharedPreferencesService.saveToken(it) }
-    it?.body()?.getAccountUsername()?.let { sharedPreferencesService.saveAccountUsername(it) }
-    it?.body()?.getRefreshToken()?.let { sharedPreferencesService.saveRefreshToken(it) }
+    it?.body()?.accessToken?.let { sharedPreferencesService.saveToken(it) }
+    it?.body()?.accountUsername?.let { sharedPreferencesService.saveAccountUsername(it) }
+    it?.body()?.refreshToken?.let { sharedPreferencesService.saveRefreshToken(it) }
   }
 }
