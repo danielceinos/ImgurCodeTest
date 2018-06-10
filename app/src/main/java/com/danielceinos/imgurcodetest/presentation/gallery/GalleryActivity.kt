@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.support.design.widget.Snackbar
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -71,6 +72,8 @@ class GalleryActivity : AppCompatActivity(), ImageUploadDialog.DialogClickListen
     } else {
       loading_progress_bar?.visibility = View.GONE
     }
+    if(!galleryViewState.success)
+      Snackbar.make(mGalleryBinding.root, galleryViewState.msg ?: "", Snackbar.LENGTH_LONG).show()
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

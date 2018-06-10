@@ -20,7 +20,7 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
   val mGalleryViewState: MutableLiveData<GalleryViewState> = MutableLiveData()
 
   fun loadImages() {
-    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, null))
+    mGalleryViewState.postValue(GalleryViewState(true, true, mGalleryViewState.value?.images, null))
     imageRepository.getImagesForCurrentUser(0)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
@@ -28,41 +28,49 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
           if (response.isSuccessful) {
             mGalleryViewState.postValue(GalleryViewState(false, true, response.body()?.data, null))
           } else {
-            mGalleryViewState.postValue(GalleryViewState(false, false, null, null))
+            mGalleryViewState.postValue(GalleryViewState(false, false, null, "Error al cargar las imagenes"))
           }
         }, { error ->
-          Log.e("Tag", error.localizedMessage)
+          Log.e("GalleryViewModel", error.localizedMessage)
         })
   }
 
   fun uploadImage(imagePath: String, name: String, title: String, description: String) {
-    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, null))
+    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, "Subiendo ... "))
     doAsync {
       imageRepository.uploadImage(
           ImageUploadRequest(scaleImageToBase64(imagePath), name, title, description))
           .observeOn(AndroidSchedulers.mainThread())
           .subscribeOn(Schedulers.io())
           .subscribe({ response ->
-            loadImages()
-            Log.i("Tag", "Image upload success")
-            //TODO handle response error code
+            if(response.isSuccessful){
+              Log.i("GalleryViewModel", "Image upload success")
+              loadImages()
+            }else{
+              Log.e("GalleryViewModel", "Image upload error: ${response.message()}")
+              mGalleryViewState.postValue(GalleryViewState(false, false, mGalleryViewState.value?.images, "Error al subir la imagen"))
+            }
           }, { error ->
-            Log.e("Tag", error.localizedMessage)
+            Log.e("GalleryViewModel", error.localizedMessage)
           })
     }
   }
 
   fun deleteImage(imgurImage: ImgurImage) {
-    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, null))
+    mGalleryViewState.postValue(GalleryViewState(true, false, mGalleryViewState.value?.images, "Borrando imagen ..."))
     imageRepository.deleteImage(imgurImage)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribe({ response ->
-          loadImages()
-          Log.i("Tag", "Image deleted success")
-          //TODO handle response error code
+          if(response.isSuccessful){
+            Log.i("GalleryViewModel", "Image deleted success")
+            loadImages()
+          }else{
+            Log.e("GalleryViewModel", "Image deleted error: ${response.message()}")
+            mGalleryViewState.postValue(GalleryViewState(false, false, mGalleryViewState.value?.images, "Error al borrar la imagen"))
+          }
         }, { error ->
-          Log.e("Tag", error.localizedMessage)
+          Log.e("GalleryViewModel", error.localizedMessage)
         })
   }
 
