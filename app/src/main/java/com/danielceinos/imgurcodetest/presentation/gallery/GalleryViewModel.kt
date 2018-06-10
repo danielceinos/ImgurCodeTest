@@ -47,7 +47,6 @@ class GalleryViewModel @Inject constructor(private val imageRepository: ImageRep
             loadImages()
             Log.i("Tag", "Image upload success")
             //TODO handle response error code
-            //TODO ocultar dialogo
           }, { error ->
             Log.e("Tag", error.localizedMessage)
           })
