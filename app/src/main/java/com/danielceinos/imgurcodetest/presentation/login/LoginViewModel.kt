@@ -28,7 +28,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
               mLoginViewState.postValue(LoginViewState(true, "EXITO!! :)"))
             }
           }, { error ->
-            Log.e("Tag", error.localizedMessage)
+            Log.e("LoginViewModel", error.localizedMessage)
           })
     }
   }
@@ -45,7 +45,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
             mLoginViewState.postValue(LoginViewState(false, response.message()))
           }
         }, { error ->
-          Log.e("Tag", error.localizedMessage)
+          Log.e("LoginViewModel", error.localizedMessage)
         })
   }
 
