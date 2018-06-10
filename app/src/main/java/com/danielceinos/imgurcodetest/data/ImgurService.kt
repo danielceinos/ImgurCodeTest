@@ -23,15 +23,12 @@ interface ImgurService {
   fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Single<Response<OauthToken>>
 
   @GET("3/account/{username}/images/{page}")
-  fun getImages(@Header("Authorization") token: String,
-                @Path(value = "username") username: String,
+  fun getImages(@Path(value = "username") username: String,
                 @Path(value = "page") page: Int): Single<Response<ImagesResponse>>
 
   @POST("3/image")
-  fun uploadImage(@Header("Authorization") token: String,
-                  @Body imageUploadRequest: ImageUploadRequest): Single<Response<ImageResponse>>
+  fun uploadImage(@Body imageUploadRequest: ImageUploadRequest): Single<Response<ImageResponse>>
 
   @DELETE("3/image/{imageHash}")
-  fun deleteImage(@Header("Authorization") token: String,
-                  @Path(value = "imageHash") imageHash: String): Single<Response<ImageDeleteResponse>>
+  fun deleteImage(@Path(value = "imageHash") imageHash: String): Single<Response<ImageDeleteResponse>>
 }

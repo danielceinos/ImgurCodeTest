@@ -12,17 +12,12 @@ class ImageRepository @Inject constructor(private val imgurService: ImgurService
 
   fun getImagesForCurrentUser(page: Int) =
       imgurService.getImages(
-          "Bearer ${sharedPreferencesService.getPref("token")}",
-          sharedPreferencesService.getPref("account_username"),
+          sharedPreferencesService.getAccountUsername() ?: "",
           page)
 
   fun uploadImage(imageUploadRequest: ImageUploadRequest) =
-      imgurService.uploadImage(
-          "Bearer ${sharedPreferencesService.getPref("token")}",
-          imageUploadRequest)
+      imgurService.uploadImage(imageUploadRequest)
 
   fun deleteImage(image: ImgurImage) =
-      imgurService.deleteImage(
-          "Bearer ${sharedPreferencesService.getPref("token")}",
-          image.deletehash ?: "")
+      imgurService.deleteImage(image.deletehash ?: "")
 }

@@ -29,7 +29,6 @@ class LoginActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     mBinding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
-    //TODO check if exist valid token
     mViewModel = ViewModelProviders.of(this, mViewModelFactory)[LoginViewModel::class.java]
     mViewModel.mLoginViewState.observe(this, Observer { renderViewState(it) })
 

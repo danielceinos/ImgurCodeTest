@@ -3,7 +3,6 @@ package com.danielceinos.imgurcodetest.presentation.gallery
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
-import com.danielceinos.imgurcodetest.common.ImageUtils
 import com.danielceinos.imgurcodetest.common.ImageUtils.ImageUtils.scaleImageToBase64
 import com.danielceinos.imgurcodetest.data.ImageRepository
 import com.danielceinos.imgurcodetest.data.request.ImageUploadRequest

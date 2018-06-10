@@ -2,6 +2,7 @@ package com.danielceinos.imgurcodetest.di.module
 
 import android.content.Context
 import com.danielceinos.imgurcodetest.App
+import com.danielceinos.imgurcodetest.data.AuthTokenInterceptor
 import com.danielceinos.imgurcodetest.data.ImgurService
 import com.danielceinos.imgurcodetest.data.SharedPreferencesService
 import com.facebook.stetho.okhttp3.StethoInterceptor
@@ -32,11 +33,12 @@ class AppModule {
 
   @Provides
   @Singleton
-  internal fun provideOkhttp(): OkHttpClient {
+  internal fun provideOkhttp(authTokenInterceptor: AuthTokenInterceptor): OkHttpClient {
     val builder = OkHttpClient.Builder()
     val logginInterceptor = HttpLoggingInterceptor()
     logginInterceptor.level = HttpLoggingInterceptor.Level.BODY
     builder.addInterceptor(logginInterceptor)
+    builder.addNetworkInterceptor(authTokenInterceptor)
     builder.addNetworkInterceptor(StethoInterceptor())
     return builder.build()
   }
@@ -60,4 +62,11 @@ class AppModule {
         Context.MODE_PRIVATE)
     )
   }
+
+  @Provides
+  @Singleton
+  internal fun provideAuthTokenInterceptor(sharedPreferencesService: SharedPreferencesService): AuthTokenInterceptor {
+    return AuthTokenInterceptor(sharedPreferencesService)
+  }
+
 }
